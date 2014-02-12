@@ -23,4 +23,5 @@ Vagrantfile
 .bundle
 .vagrant
 .*.swp
+.sass-cache/
 TAGS
