@@ -59,7 +59,6 @@ Generate your settings files. First change into the opencongress directory and t
 
     cp config/api_keys.yml.example config/api_keys.yml &&
     cp config/application_settings.yml.example config/api_keys.yml &&
-    cp config/assets.yml.example config/assets.yml &&
     cp config/cucumber.yml.example config/cucumber.yml &&
     cp config/database.yml.example config/database.yml &&
     cp config/facebooker.yml.example config/facebooker.yml
