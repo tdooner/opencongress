@@ -25,6 +25,7 @@ class Formageddon::FormageddonContactStep
 
   def delegate_choice_value(options = {})
     value = nil
+
     if options[:type] == :issue_area
       text = options[:letter].message rescue ''
       contactable = ContactCongressLettersFormageddonThread.where(
@@ -46,6 +47,25 @@ class Formageddon::FormageddonContactStep
           :headers => { "Content-Type" => "application/x-www-form-urlencoded"}
         ).body) rescue nil
       value || options[:default]
+
+    elsif options[:type] == :title
+      value = nil
+      gender = detect_gender(options[:letter].formageddon_thread.sender_first_name).to_s rescue 'andy'
+      if gender.include?('female')
+        value = options[:option_list].select{|v| (v =~ /ms\.?/i).present? }.first rescue nil
+      elsif gender.include?('male')
+        value = options[:option_list].select{|v| (v =~ /mr\.?/i).present? }.first rescue nil
+      end
+      binding.pry
+      value || options[:option_list].first
     end
+  end
+
+protected
+
+  def detect_gender(name)
+    @@detector ||= Sexmachine::Detector.new
+    first_name = name.split(/ \-/).first
+    @@detector.get_gender(first_name)
   end
 end

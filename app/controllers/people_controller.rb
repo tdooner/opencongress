@@ -130,7 +130,7 @@ class PeopleController < ApplicationController
       p1_rc_ids = Set.new(RollCallVote.on_passage.where(:person_id => @person1.id).map(&:roll_call_id))
       p2_rc_ids = Set.new(RollCallVote.on_passage.where(:person_id => @person2.id).map(&:roll_call_id))
       shared_rc_ids = (p1_rc_ids & p2_rc_ids).to_a
-      @votes = RollCall.includes(:roll_call_votes, :bill).where(:id => shared_rc_ids, 'roll_calls.where' => @chamber).order('date DESC')
+      @votes = RollCall.eager_load(:roll_call_votes, :bill).where(:id => shared_rc_ids, 'roll_calls.where' => @chamber).order('date DESC')
       @votes = @votes.map{|v| [v, v.roll_call_votes.where(:person_id => [@person1.id, @person2.id]).group_by(&:person_id)]}
     end
 

@@ -25,12 +25,12 @@ class GroupMembersController < ApplicationController
     end
 
     if @group.can_moderate?(current_user)
-      @group_members = @group.group_members.includes(:user).order("users.login").paginate(:per_page => 100, :page => params[:page])
+      @group_members = @group.group_members.eager_load(:user).order("users.login").paginate(:per_page => 100, :page => params[:page])
     else
       if @group.state or @group.district
-        @group_members = @group.group_members.where("group_members.status != 'BOOTED' AND privacy_options.my_congressional_district=2").includes(:user => :privacy_option).order("UPPER(users.login)").paginate(:per_page => 100, :page => params[:page])
+        @group_members = @group.group_members.eager_load(:user => :privacy_option).where("group_members.status != 'BOOTED' AND privacy_options.my_congressional_district=2").order("UPPER(users.login)").paginate(:per_page => 100, :page => params[:page])
       else
-        @group_members = @group.group_members.where("group_members.status != 'BOOTED'").includes(:user).order("UPPER(users.login)").paginate(:per_page => 100, :page => params[:page])
+        @group_members = @group.group_members.eager_load(:user).where("group_members.status != 'BOOTED'").order("UPPER(users.login)").paginate(:per_page => 100, :page => params[:page])
       end
     end
   end

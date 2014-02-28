@@ -126,7 +126,7 @@ class BillController < ApplicationController
 
     @root_category = Subject.root_category
     @congress = params[:congress].blank? ? Settings.default_congress : params[:congress]
-    @major_bills = Bill.major.includes(:subjects).where(:session => @congress)
+    @major_bills = Bill.major.eager_load(:subjects).where(:session => @congress)
     @categories = @major_bills.flat_map{|b| b.subjects.select{|s| s.is_child_of(@root_category)} }.uniq
 
     respond_to do |format|
@@ -135,7 +135,7 @@ class BillController < ApplicationController
       format.rss {
         @hot_bills = Bill.find(:all, :conditions => ["session = ? AND hot_bill_category_id IS NOT NULL", @congress],
                            :order => 'introduced DESC')
-        render :action => 'major.rxml'
+        render :action => 'major.xml'
       }
     end
   end
@@ -214,7 +214,7 @@ class BillController < ApplicationController
     @page = "1" unless @page
     @bill_type = params[:bill_type]
 
-    @bills = Bill.where(["bills.bill_type=? AND bills.session=?", @bill_type, congress]).includes(:bill_titles).order('number DESC').paginate(:page => @page)
+    @bills = Bill.where(["bills.bill_type=? AND bills.session=?", @bill_type, congress]).eager_load(:bill_titles).order('number DESC').paginate(:page => @page)
 
     respond_to do |format|
       format.html {}
@@ -290,7 +290,7 @@ class BillController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.rss { render :action => "readthebill.rxml" }
+      format.rss { render :action => "readthebill.xml" }
       format.js { render :action => 'update'}
     end
   end
@@ -304,7 +304,7 @@ class BillController < ApplicationController
     @posts = []
     expires_in 60.minutes, :public => true
 
-    render :layout => false
+    render 'atom.xml', :layout => false
   end
 
   def atom_news
@@ -312,7 +312,7 @@ class BillController < ApplicationController
     @commentaries = @bill.news
     @commentary_type = 'news'
 
-    render :action => 'commentary_atom', :layout => false
+    render 'commentary_atom.xml', :layout => false
   end
 
   def atom_blogs
@@ -320,7 +320,7 @@ class BillController < ApplicationController
     @commentary_type = 'blog'
     expires_in 60.minutes, :public => true
 
-    render :action => 'commentary_atom', :layout => false
+    render 'commentary_atom.xml', :layout => false
   end
 
   def atom_topnews
@@ -328,7 +328,7 @@ class BillController < ApplicationController
     @commentary_type = 'topnews'
     expires_in 60.minutes, :public => true
 
-    render :action => 'commentary_atom', :layout => false
+    render 'commentary_atom.xml', :layout => false
   end
 
   def atom_topblogs
@@ -336,7 +336,7 @@ class BillController < ApplicationController
     @commentary_type = 'topblog'
     expires_in 60.minutes, :public => true
 
-    render :action => 'commentary_atom', :layout => false
+    render 'commentary_atom.xml', :layout => false
   end
 
   def atom_list
@@ -351,7 +351,7 @@ class BillController < ApplicationController
     @bills = @bills.order("#{@sort} DESC").limit(20)
     expires_in 60.minutes, :public => true
 
-    render :action => 'list_atom', :layout => false
+    render 'list_atom.xml', :layout => false
   end
 
   def atom_top20
@@ -361,7 +361,7 @@ class BillController < ApplicationController
     @most_type = "viewed"
     expires_in 60.minutes, :public => true
 
-    render :action => 'top20_atom', :layout => false
+    render 'top20_atom.xml', :layout => false
   end
 
   def atom_top_commentary
@@ -378,7 +378,7 @@ class BillController < ApplicationController
     @bills = Bill.top20_commentary(commentary_type)
     expires_in 60.minutes, :public => true
 
-    render :action => 'top20_atom', :layout => false
+    render 'top20_atom.xml', :layout => false
   end
 
   # this action is to show a non-cached version of 'show'
@@ -424,7 +424,7 @@ class BillController < ApplicationController
 
     @page_title = "Letters to Congress: #{@bill.typenumber}"
 
-    @letters = @bill.contact_congress_letters.includes(:formageddon_threads).where("formageddon_threads.privacy='PUBLIC'").order("contact_congress_letters.created_at DESC").paginate(:page => params[:page], :per_page => 10)
+    @letters = @bill.contact_congress_letters.eager_load(:formageddon_threads).where("formageddon_threads.privacy='PUBLIC'").order("contact_congress_letters.created_at DESC").paginate(:page => params[:page], :per_page => 10)
   end
 
   def text

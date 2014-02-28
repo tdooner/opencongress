@@ -4,7 +4,7 @@
     <h5>
       <%= @person.party %> &nbsp;&bull;&nbsp;
       <%= link_to("#{@person.district.to_i.ordinalize} District", state_district_path(@person.state, @person.district)) + ', ' if @person.in_a_valid_district? %>
-      <%= "#{State.for_abbrev(@person.state)} &nbsp;&bull;&nbsp;".html_safe unless @person.state.blank? %> 
+      <%= "#{State.for_abbrev(@person.state)} &nbsp;&bull;&nbsp;".html_safe unless @person.state.blank? %>
       <%= @person.is_sitting? ? "#{@person.consecutive_roles.size.ordinalize} Term" : "#{@person.consecutive_roles.size} Terms" %> &nbsp;&bull;&nbsp;
       <% if @person.consecutive_roles.last %>
         Sworn In <%= @person.consecutive_roles.last.startdate.strftime("%Y") %>
@@ -25,7 +25,7 @@
       <% end %>
     </ul>
     <% end %>
-  </div>  
+  </div>
 
   <% unless @person.person_stats.nil? %>
     <ul id="sponsor_stats" class="clearfix">
@@ -35,31 +35,31 @@
 
   <div class="clearfix">
   </div>
-  
+
   <% unless (voting_similarities_html = top_voting_similarities).nil? %>
     <div class="floatleft">
     <%= voting_similarities_html %>
     </div>
-  <% end %> 
+  <% end %>
 
-  <img class="floatright bio_avatar legislator-photo-full" src="/images/<%= @person.photo_path(:full, :ignore_missing) %>">
+  <img class="floatright bio_avatar legislator-photo-full" src="<%= asset_path("#{@person.photo_path(:full, :ignore_missing)}") %>">
 
   <div class="clearfix">
   </div>
 
-  <% unless @bio_summary.blank? %> 
+  <% unless @bio_summary.blank? %>
     <div class='bio_summary'><%= @bio_summary.html_safe %></div>
   <% end %>
 </div>
 
 <% if admin_logged_in? %>
   <div style="padding-left: 30px;">
-    <%= link_to "New news/blog article", :controller => 'admin/commentary', :action => 'new', :commentariable_type => 'Person', :commentariable_id => @person.id %> | 
+    <%= link_to "New news/blog article", :controller => 'admin/commentary', :action => 'new', :commentariable_type => 'Person', :commentariable_id => @person.id %> |
     <%= link_to "Cleanup news/blog articles (This may take several minutes)", :controller => 'admin/commentary', :action => 'person_cleanup', :person_id => @person.id %>
   </div>
 <% end %>
 
-<div id="tabs"> 
+<div id="tabs">
   <ul class="un">
     <%= make_tabs(@tabs) %>
   </ul>

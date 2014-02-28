@@ -20,13 +20,13 @@
 
 </p>
 <p><label>Get E-Mail updates about OpenCongress?</label>
-  <%= form_for :user, nil, :url => {:controller => 'account', :action => 'mailing_list', :id => current_user.id}, :html => {:style => "display:inline;"} do |f| %>
+  <%= form_for :user, :url => {:controller => 'account', :action => 'mailing_list', :id => current_user.id}, :html => {:style => "display:inline;"} do |f| %>
   <%= f.check_box :mailing, :onClick => "this.form.submit();" %>
   <% end %>
 </p>
 
 <p><label>Join the PPF and Sunlight Foundation email lists?</label>
-  <%= form_for :user, nil, :url => {:controller => 'account', :action => 'partner_mailing_list', :id => current_user.id}, :html => {:style => "display:inline;"} do |f| %>
+  <%= form_for :user, :url => {:controller => 'account', :action => 'partner_mailing_list', :id => current_user.id}, :html => {:style => "display:inline;"} do |f| %>
   <%= f.check_box :partner_mailing, :onClick => "this.form.submit();" %>
   <% end %>
 </p>
@@ -34,7 +34,7 @@
 <div class="clear">&nbsp;</div>
 <%= toggler('change_pass', 'Change Password', 'Close', 'button silver medium', 'button silver medium').html_safe %>
 <div id="change_pass" style="display:none; margin-top: 10px;">
-  <%= form_for :user, nil, :url => {:controller => 'account', :action => 'change_pw', :id => current_user.id} do |f| %>
+  <%= form_for :user, :url => {:controller => 'account', :action => 'change_pw', :id => current_user.id} do |f| %>
   <p><label>New Password:</label>
     <%= f.password_field :password %>
   </p>
